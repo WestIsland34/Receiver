@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NRX01 ブラックボックス取り出し</title>
+<style>
+  :root { --bg:#f6f7f9; --fg:#1d232b; --card:#fff; --line:#d8dde3; --acc:#d97706; --muted:#5d6874; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#14171b; --fg:#e7eaee; --card:#1d2228; --line:#2f363e; --acc:#f59e0b; --muted:#9aa5b1; } }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.6 "Yu Gothic UI", system-ui, sans-serif; }
+  main { max-width:720px; margin:0 auto; padding:16px; }
+  h1 { font-size:20px; margin:8px 0 4px; }
+  p.note { color:var(--muted); margin:0 0 16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:12px; }
+  button { font:inherit; padding:8px 14px; margin:4px 6px 4px 0; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer; }
+  button.primary { background:var(--acc); border-color:var(--acc); color:#111; font-weight:600; }
+  button:disabled { opacity:.45; cursor:default; }
+  progress { width:100%; height:14px; }
+  pre { white-space:pre-wrap; word-break:break-all; max-height:260px; overflow:auto; background:var(--bg); padding:8px; border-radius:6px; font-size:12px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>NRX01 ブラックボックス取り出し・バインド</h1>
+  <p class="note">XIAO MG24 をUSBでつなぎ、Chrome / Edge で開いてください（Web Serial を使います）。
+  保存した .bbl は <a href="https://blackbox.betaflight.com/" target="_blank" rel="noopener">Betaflight Blackbox Explorer</a> や Rotorflight Blackbox で開けます。</p>
+
+  <div class="card">
+    <button id="connect" class="primary">接続</button>
+    <button id="bind" disabled>バインド (bind)</button>
+    <button id="info" disabled>情報 (info)</button>
+    <button id="stop" disabled>記録停止 (stop)</button>
+    <button id="dump" class="primary" disabled>ログを保存 (dump)</button>
+    <button id="erase" disabled>全消去 (erase)</button>
+  </div>
+
+  <div class="card">
+    <div id="status">未接続</div>
+    <progress id="prog" max="1" value="0"></progress>
+  </div>
+
+  <div class="card"><pre id="log"></pre></div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let port, reader, writer;
+let rx = new Uint8Array(0);           // bytes received and not yet consumed
+let mode = "text";                     // "text" | "binary"
+let want = 0, got = [], gotLen = 0;
+
+function logText(s) { const l = $("log"); l.textContent += s; l.scrollTop = l.scrollHeight; }
+function setButtons(on) { for (const id of ["bind", "info", "stop", "dump", "erase"]) $(id).disabled = !on; }
+function append(a, b) { const c = new Uint8Array(a.length + b.length); c.set(a); c.set(b, a.length); return c; }
+
+async function send(cmd) { await writer.write(new TextEncoder().encode(cmd + "\n")); }
+
+function handle() {
+  for (;;) {
+    if (mode === "text") {
+      const nl = rx.indexOf(10);
+      if (nl < 0) return;
+      const line = new TextDecoder().decode(rx.slice(0, nl)).replace(/\r$/, "");
+      rx = rx.slice(nl + 1);
+      const m = line.match(/^BBL BEGIN (\d+)$/);
+      if (m) {
+        want = +m[1]; got = []; gotLen = 0; mode = "binary";
+        $("prog").max = Math.max(want, 1); $("prog").value = 0;
+        $("status").textContent = `受信中 0 / ${want} バイト`;
+        if (want === 0) finishDump();
+      } else {
+        logText(line + "\n");
+      }
+    } else {
+      const take = Math.min(want - gotLen, rx.length);
+      if (take <= 0) return;
+      got.push(rx.slice(0, take)); gotLen += take; rx = rx.slice(take);
+      $("prog").value = gotLen;
+      $("status").textContent = `受信中 ${gotLen} / ${want} バイト`;
+      if (gotLen >= want) finishDump();
+    }
+  }
+}
+
+function finishDump() {
+  mode = "text";
+  const blob = new Blob(got, { type: "application/octet-stream" });
+  const d = new Date(), p = n => String(n).padStart(2, "0");
+  const name = `NRX01_${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.bbl`;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  $("status").textContent = `保存しました: ${name}（${want} バイト）`;
+}
+
+async function readLoop() {
+  while (port.readable) {
+    reader = port.readable.getReader();
+    try {
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        rx = append(rx, value);
+        handle();
+      }
+    } catch (e) { logText("読み取りエラー: " + e + "\n"); }
+    finally { reader.releaseLock(); }
+  }
+}
+
+$("connect").onclick = async () => {
+  if (!("serial" in navigator)) { alert("このブラウザは Web Serial に対応していません（Chrome / Edge を使ってください）"); return; }
+  port = await navigator.serial.requestPort();
+  await port.open({ baudRate: 115200, bufferSize: 65536 });
+  writer = port.writable.getWriter();
+  $("status").textContent = "接続しました";
+  setButtons(true);
+  readLoop();
+};
+$("bind").onclick = () => {
+  if (confirm("記憶している送信機を忘れて、次に受信した S-FHSS 送信機にバインドします。\n送信機を S-FHSS にして電源を入れ、近くに他の S-FHSS 送信機がない状態で OK を押してください。")) send("bind");
+};
+$("info").onclick = () => send("info");
+$("stop").onclick = () => send("stop");
+$("dump").onclick = () => { $("status").textContent = "ログを要求しています…"; send("dump"); };
+$("erase").onclick = () => {
+  if (confirm("フラッシュのログをすべて消去します。元に戻せません。よろしいですか？")) send("erase yes");
+};
+</script>
+</body>
+</html>
