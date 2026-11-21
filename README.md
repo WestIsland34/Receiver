@@ -27,7 +27,7 @@ XIAO MG24 Sense に載っている 6 軸センサー（ジャイロ・加速度�
 2. **飛行機**：エルロン・エレベーター・ラダーで機体の揺れを抑え、姿勢を安定させます。
 3. **ヘリコプター**（最終目標）：ヘリコプター用のジャイロ機能を目指します。
 
-ジャイロ機能の PID などの設定は、Bluetooth でスマートフォン（Android・iPhone）からつないで調整できるようにする予定です。
+ジャイロ機能の PID などの設定は、Bluetooth でスマートフォン（Android・iPhone）からつないで調整できるようにする予定です。iPhone では Web Bluetooth に対応したブラウザ [Bluefy](https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055) を使います。
 
 > 個人が趣味で開発している物なので、予定は変わることがあります。
 
@@ -47,7 +47,7 @@ XIAO MG24 Sense に載っている 6 軸センサー（ジャイロ・加速度�
 ## Receiver ソフト
 
 ブラウザから XIAO MG24 に USB ケーブルか Bluetooth でつなぎ、ログの保存・バインド・情報表示・記録停止・全消去ができます。
-Chrome / Edge で使えます（Bluetooth は Android のスマートフォンからも可。iPhone は非対応）。インストールは不要です。
+Chrome / Edge で使えます（Bluetooth は Android のスマートフォンからも可。iPhone / iPad は [Bluefy](https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055) ブラウザで開きます）。インストールは不要です。
 
 → **[Receiver ソフトを開く](https://westisland.jp/Receiver/app.html)**
 

@@ -149,7 +149,7 @@ $("connectUsb").onclick = async () => {
 
 // ---------------- Bluetooth (Web Bluetooth) ----------------
 $("connectBle").onclick = async () => {
-  if (!navigator.bluetooth) { alert("このブラウザは Web Bluetooth に対応していません（Chrome / Edge を使ってください。iPhone / iPad は非対応です）"); return; }
+  if (!navigator.bluetooth) { alert("このブラウザは Web Bluetooth に対応していません（Chrome / Edge を使ってください。iPhone / iPad は Bluefy ブラウザで開いてください）"); return; }
   let device;
   try {
     device = await navigator.bluetooth.requestDevice({ filters: [{ namePrefix: "NRX01" }], optionalServices: [BLE_SVC] });
@@ -172,7 +172,7 @@ $("connectBle").onclick = async () => {
       send: text => {
         const b = new TextEncoder().encode(text);
         queue = queue.then(async () => {
-          for (let i = 0; i < b.length; i += 20) await rxc.writeValueWithResponse(b.slice(i, i + 20));
+          for (let i = 0; i < b.length; i += 20) { const part = b.slice(i, i + 20); await (rxc.writeValueWithResponse ? rxc.writeValueWithResponse(part) : rxc.writeValue(part)); }
         });
         return queue;
       },

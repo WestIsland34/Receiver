@@ -238,7 +238,7 @@
 
 ### 7.3 Web アプリ（ログ取り出し・バインド）
 [Receiver ソフト（`docs/app.html`）](https://westisland.jp/Receiver/app.html) を Chrome / Edge で開き、「USB で接続」（Web Serial）か「Bluetooth で接続」（Web Bluetooth）を押します。
-Bluetooth は受信機の電源を入れてから 60 秒以内に接続します。iPhone / iPad のブラウザは Web Bluetooth に対応していません。
+Bluetooth は受信機の電源を入れてから 60 秒以内に接続します。iPhone / iPad の Safari・Chrome は Web Bluetooth に対応していないため、Web Bluetooth 対応ブラウザ [Bluefy](https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055) で開きます。
 
 | ボタン | 動作 |
 |---|---|
