@@ -11,6 +11,7 @@ Futaba S-FHSS 受信機です。
 
 ## ドキュメント
 - [仕様書](docs/SPEC.md)
-- [Web アプリ（ログ取り出し・バインド）](docs/index.html) — Chrome / Edge、Web Serial
+- [説明ページ](https://westisland.jp/Receiver/)
+- [Receiver ソフト（ログ取り出し・バインド）](https://westisland.jp/Receiver/app.html) — Chrome / Edge、Web Serial
 
 > 状態：基板データとファームウェアは作成済み。実機での動作確認はまだです。

@@ -3,128 +3,97 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NRX01 ログ取り出し・バインド</title>
+<title>NRX01 S-FHSS 受信機</title>
+<meta name="description" content="TI CC2500 の小型受信基板 NRX01 と Seeed Studio XIAO MG24 Sense で作る Futaba S-FHSS 受信機。S.BUS・PWM 出力、100 Hz ブラックボックス記録。">
 <style>
-  :root { --bg:#f6f7f9; --fg:#1d232b; --card:#fff; --line:#d8dde3; --acc:#d97706; --muted:#5d6874; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#14171b; --fg:#e7eaee; --card:#1d2228; --line:#2f363e; --acc:#f59e0b; --muted:#9aa5b1; } }
-  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.6 "Yu Gothic UI", system-ui, sans-serif; }
-  main { max-width:720px; margin:0 auto; padding:16px; }
-  h1 { font-size:20px; margin:8px 0 4px; }
-  p.note { color:var(--muted); margin:0 0 16px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:12px; }
-  button { font:inherit; padding:8px 14px; margin:4px 6px 4px 0; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer; }
-  button.primary { background:var(--acc); border-color:var(--acc); color:#111; font-weight:600; }
-  button:disabled { opacity:.45; cursor:default; }
-  progress { width:100%; height:14px; }
-  pre { white-space:pre-wrap; word-break:break-all; max-height:260px; overflow:auto; background:var(--bg); padding:8px; border-radius:6px; font-size:12px; }
+  :root { --bg:#f6f7f9; --fg:#1d232b; --card:#fff; --line:#d8dde3; --acc:#d97706; --muted:#5d6874; --photo:#eef0f3; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#14171b; --fg:#e7eaee; --card:#1d2228; --line:#2f363e; --acc:#f59e0b; --muted:#9aa5b1; --photo:#262c33; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.7 "Yu Gothic UI", "Hiragino Sans", system-ui, sans-serif; }
+  main { max-width:880px; margin:0 auto; padding:24px 16px 48px; }
+  h1 { font-size:28px; line-height:1.3; margin:8px 0 6px; }
+  h2 { font-size:20px; margin:36px 0 12px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+  p.lead { color:var(--muted); margin:0 0 20px; }
+  a { color:var(--acc); }
+  .btns { display:flex; flex-wrap:wrap; gap:10px; margin:0 0 8px; }
+  .btn { display:inline-block; padding:12px 20px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--fg); text-decoration:none; font-weight:600; }
+  .btn.primary { background:var(--acc); border-color:var(--acc); color:#111; }
+  .btn:hover { filter:brightness(1.06); }
+  .photos { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; }
+  @media (max-width:640px) { .photos { grid-template-columns:1fr; } }
+  figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  figure .img { background:var(--photo); aspect-ratio:3 / 4; display:flex; align-items:center; justify-content:center; padding:12px; }
+  figure img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
+  figcaption { padding:10px 12px; font-size:14px; }
+  figcaption small { display:block; color:var(--muted); }
+  ul.feat { padding-left:1.2em; margin:0; }
+  ul.feat li { margin:4px 0; }
+  table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; font-size:15px; }
+  th, td { text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { width:30%; color:var(--muted); font-weight:600; }
+  tr:last-child th, tr:last-child td { border-bottom:none; }
+  .note { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--acc); border-radius:8px; padding:10px 14px; font-size:15px; }
+  footer { margin-top:40px; color:var(--muted); font-size:13px; }
 </style>
 </head>
 <body>
 <main>
-  <h1>NRX01 ブラックボックス取り出し・バインド</h1>
-  <p class="note">XIAO MG24 をUSBでつなぎ、Chrome / Edge で開いてください（Web Serial を使います）。
-  保存した .bbl は <a href="https://blackbox.betaflight.com/" target="_blank" rel="noopener">Betaflight Blackbox Explorer</a> や Rotorflight Blackbox で開けます。</p>
+  <h1>NRX01 S-FHSS 受信機</h1>
+  <p class="lead">TI CC2500 を使った小さな 2.4 GHz 受信基板 NRX01 と、Seeed Studio XIAO MG24 Sense を組み合わせた Futaba S-FHSS 受信機です。</p>
 
-  <div class="card">
-    <button id="connect" class="primary">接続</button>
-    <button id="bind" disabled>バインド (bind)</button>
-    <button id="info" disabled>情報 (info)</button>
-    <button id="stop" disabled>記録停止 (stop)</button>
-    <button id="dump" class="primary" disabled>ログを保存 (dump)</button>
-    <button id="erase" disabled>全消去 (erase)</button>
+  <div class="btns">
+    <a class="btn primary" href="app.html">Receiver ソフトを開く（ログ取り出し・バインド）</a>
+    <a class="btn" href="https://github.com/WestIsland34/Receiver/blob/main/docs/SPEC.md">仕様書</a>
+    <a class="btn" href="https://github.com/WestIsland34/Receiver">GitHub</a>
   </div>
 
-  <div class="card">
-    <div id="status">未接続</div>
-    <progress id="prog" max="1" value="0"></progress>
+  <h2>写真</h2>
+  <div class="photos">
+    <figure>
+      <div class="img"><img src="images/nrx01_top.png" alt="NRX01 表面。中央に CC2500、右に水晶、上にアンテナと GND の端子、下に 8 ピンの接続パッド" loading="lazy"></div>
+      <figcaption>NRX01 表面<small>14.38 × 20.27 mm、CC2500 と RF 部品</small></figcaption>
+    </figure>
+    <figure>
+      <div class="img"><img src="images/nrx01_bottom.png" alt="NRX01 裏面。ピン名 VIN・GND・CSn・GDO0・GDO2・SO・SCLK・SI と「に」のロゴ" loading="lazy"></div>
+      <figcaption>NRX01 裏面<small>ピン名表示、裏面は GND ベタ</small></figcaption>
+    </figure>
+    <figure>
+      <div class="img"><img src="images/xiao_mg24_sense.jpg" alt="Seeed Studio XIAO MG24 Sense" loading="lazy"></div>
+      <figcaption>XIAO MG24 Sense（ホスト）<small>写真：Seeed Studio</small></figcaption>
+    </figure>
   </div>
 
-  <div class="card"><pre id="log"></pre></div>
+  <h2>特長</h2>
+  <ul class="feat">
+    <li><b>受信のみ</b>：技適のない無線部（CC2500）からは電波を出さない設計です。</li>
+    <li><b>S.BUS 16 ch</b>（標準の反転信号、変換回路不要）と <b>PWM 6 ch</b> を同時に出力します。</li>
+    <li><b>ブラックボックス</b>：XIAO の 4 MB フラッシュに 100 Hz で記録します。Betaflight / Rotorflight 互換の .bbl 形式で、受信値・受信強度・ジャイロ・加速度を残します。</li>
+    <li><b>バインド</b>：USB シリアルの <code>bind</code> コマンド、または下の Receiver ソフトのボタンで行います。</li>
+    <li>無線部は TI の CC2500EM 参照設計（0.8 mm 基板版）をそのまま写しています。</li>
+  </ul>
+
+  <h2>主な仕様</h2>
+  <table>
+    <tr><th>対応方式</th><td>Futaba S-FHSS（2.4 GHz、30 ch 周波数ホッピング）</td></tr>
+    <tr><th>出力</th><td>S.BUS 16 ch（D6）、PWM 6 ch（D3 / D4 / D5 / D7 / D18 / D0）</td></tr>
+    <tr><th>記録</th><td>100 Hz、4 MB で約 28 分</td></tr>
+    <tr><th>NRX01 基板</th><td>14.38 × 20.27 mm、2 層 0.8 mm、J1 8 ピン（1.75 mm ピッチ）、アンテナ・GND 端子</td></tr>
+    <tr><th>電源</th><td>3.3 V（XIAO の 3V3 から）</td></tr>
+  </table>
+
+  <h2>Receiver ソフト</h2>
+  <p>ブラウザから XIAO MG24 に USB でつなぎ、ログの保存・バインド・情報表示・記録停止・全消去ができます。Chrome / Edge（パソコン）で使えます。インストールは不要です。</p>
+  <div class="btns">
+    <a class="btn primary" href="app.html">Receiver ソフトを開く</a>
+  </div>
+
+  <h2>状態</h2>
+  <p class="note">基板データとファームウェアは作成済みです。基板は試作の準備中で、実機での動作確認はまだです。</p>
+
+  <footer>
+    S-FHSS 受信処理は <a href="https://github.com/opiopan/rcstick-f">opiopan/rcstick-f</a>（Apache License 2.0）を移植・改変したものです。
+    XIAO MG24 Sense の写真は Seeed Studio によるものです。
+  </footer>
 </main>
-<script>
-const $ = id => document.getElementById(id);
-let port, reader, writer;
-let rx = new Uint8Array(0);           // bytes received and not yet consumed
-let mode = "text";                     // "text" | "binary"
-let want = 0, got = [], gotLen = 0;
-
-function logText(s) { const l = $("log"); l.textContent += s; l.scrollTop = l.scrollHeight; }
-function setButtons(on) { for (const id of ["bind", "info", "stop", "dump", "erase"]) $(id).disabled = !on; }
-function append(a, b) { const c = new Uint8Array(a.length + b.length); c.set(a); c.set(b, a.length); return c; }
-
-async function send(cmd) { await writer.write(new TextEncoder().encode(cmd + "\n")); }
-
-function handle() {
-  for (;;) {
-    if (mode === "text") {
-      const nl = rx.indexOf(10);
-      if (nl < 0) return;
-      const line = new TextDecoder().decode(rx.slice(0, nl)).replace(/\r$/, "");
-      rx = rx.slice(nl + 1);
-      const m = line.match(/^BBL BEGIN (\d+)$/);
-      if (m) {
-        want = +m[1]; got = []; gotLen = 0; mode = "binary";
-        $("prog").max = Math.max(want, 1); $("prog").value = 0;
-        $("status").textContent = `受信中 0 / ${want} バイト`;
-        if (want === 0) finishDump();
-      } else {
-        logText(line + "\n");
-      }
-    } else {
-      const take = Math.min(want - gotLen, rx.length);
-      if (take <= 0) return;
-      got.push(rx.slice(0, take)); gotLen += take; rx = rx.slice(take);
-      $("prog").value = gotLen;
-      $("status").textContent = `受信中 ${gotLen} / ${want} バイト`;
-      if (gotLen >= want) finishDump();
-    }
-  }
-}
-
-function finishDump() {
-  mode = "text";
-  const blob = new Blob(got, { type: "application/octet-stream" });
-  const d = new Date(), p = n => String(n).padStart(2, "0");
-  const name = `NRX01_${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.bbl`;
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob); a.download = name; a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-  $("status").textContent = `保存しました: ${name}（${want} バイト）`;
-}
-
-async function readLoop() {
-  while (port.readable) {
-    reader = port.readable.getReader();
-    try {
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        rx = append(rx, value);
-        handle();
-      }
-    } catch (e) { logText("読み取りエラー: " + e + "\n"); }
-    finally { reader.releaseLock(); }
-  }
-}
-
-$("connect").onclick = async () => {
-  if (!("serial" in navigator)) { alert("このブラウザは Web Serial に対応していません（Chrome / Edge を使ってください）"); return; }
-  port = await navigator.serial.requestPort();
-  await port.open({ baudRate: 115200, bufferSize: 65536 });
-  writer = port.writable.getWriter();
-  $("status").textContent = "接続しました";
-  setButtons(true);
-  readLoop();
-};
-$("bind").onclick = () => {
-  if (confirm("記憶している送信機を忘れて、次に受信した S-FHSS 送信機にバインドします。\n送信機を S-FHSS にして電源を入れ、近くに他の S-FHSS 送信機がない状態で OK を押してください。")) send("bind");
-};
-$("info").onclick = () => send("info");
-$("stop").onclick = () => send("stop");
-$("dump").onclick = () => { $("status").textContent = "ログを要求しています…"; send("dump"); };
-$("erase").onclick = () => {
-  if (confirm("フラッシュのログをすべて消去します。元に戻せません。よろしいですか？")) send("erase yes");
-};
-</script>
 </body>
 </html>
