@@ -8,6 +8,7 @@ Futaba S-FHSS 受信機です。
 - 受信のみ（技適のない無線部から電波を出さない設計）
 - 出力：S.BUS 16 ch ＋ PWM 6 ch
 - ブラックボックス：100 Hz、Betaflight / Rotorflight 互換の .bbl
+- Bluetooth：フライトシミュレーター用ゲームパッド、Web アプリ接続
 
 ## ドキュメント
 - [仕様書](docs/SPEC.md)

@@ -68,6 +68,7 @@
     <li><b>受信のみ</b>：技適のない無線部（CC2500）からは電波を出さない設計です。</li>
     <li><b>S.BUS 16 ch</b>（標準の反転信号、変換回路不要）と <b>PWM 6 ch</b> を同時に出力します。</li>
     <li><b>ブラックボックス</b>：XIAO の 4 MB フラッシュに 100 Hz で記録します。Betaflight / Rotorflight 互換の .bbl 形式で、受信値・受信強度・ジャイロ・加速度を残します。</li>
+    <li><b>フライトシミュレーター</b>：Bluetooth ゲームパッドとしてパソコンにつながり、S-FHSS の送信機でシミュレーターを操縦できます（追加ソフト不要）。</li>
     <li><b>バインド</b>：USB シリアルの <code>bind</code> コマンド、または下の Receiver ソフトのボタンで行います。</li>
     <li>無線部は TI の CC2500EM 参照設計（0.8 mm 基板版）をそのまま写しています。</li>
   </ul>
@@ -76,13 +77,14 @@
   <table>
     <tr><th>対応方式</th><td>Futaba S-FHSS（2.4 GHz、30 ch 周波数ホッピング）</td></tr>
     <tr><th>出力</th><td>S.BUS 16 ch（D6）、PWM 6 ch（D3 / D4 / D5 / D7 / D18 / D0）</td></tr>
+    <tr><th>Bluetooth</th><td>ゲームパッド（8 軸＋8 ボタン）とコマンド。電源投入後 60 秒間だけ受付、接続がなければ停止</td></tr>
     <tr><th>記録</th><td>100 Hz、4 MB で約 28 分</td></tr>
     <tr><th>NRX01 基板</th><td>14.38 × 20.27 mm、2 層 0.8 mm、J1 8 ピン（1.75 mm ピッチ）、アンテナ・GND 端子</td></tr>
     <tr><th>電源</th><td>3.3 V（XIAO の 3V3 から）</td></tr>
   </table>
 
   <h2>Receiver ソフト</h2>
-  <p>ブラウザから XIAO MG24 に USB でつなぎ、ログの保存・バインド・情報表示・記録停止・全消去ができます。Chrome / Edge（パソコン）で使えます。インストールは不要です。</p>
+  <p>ブラウザから XIAO MG24 に USB ケーブルか Bluetooth でつなぎ、ログの保存・バインド・情報表示・記録停止・全消去ができます。Chrome / Edge で使えます（Bluetooth は Android のスマートフォンからも可。iPhone は非対応）。インストールは不要です。</p>
   <div class="btns">
     <a class="btn primary" href="app.html">Receiver ソフトを開く</a>
   </div>
