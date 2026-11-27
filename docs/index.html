@@ -3,14 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NRX01 S-FHSS 受信機</title>
-<meta name="description" content="TI CC2500 の小型受信基板 NRX01 と Seeed Studio XIAO MG24 Sense で作る Futaba S-FHSS 受信機。S.BUS・PWM 出力、100 Hz ブラックボックス記録。">
+<title>NRX01 S-FHSS SPI制御受信モジュール</title>
+<meta name="description" content="TI CC2500 を載せた 14.38 × 20.27 mm の 2.4 GHz 受信モジュール NRX01。マイコンから SPI で制御して Futaba S-FHSS を受信します。受信専用。">
 <style>
   :root { --bg:#f6f7f9; --fg:#1d232b; --card:#fff; --line:#d8dde3; --acc:#d97706; --muted:#5d6874; --photo:#eef0f3; }
   @media (prefers-color-scheme: dark) { :root { --bg:#14171b; --fg:#e7eaee; --card:#1d2228; --line:#2f363e; --acc:#f59e0b; --muted:#9aa5b1; --photo:#262c33; } }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.7 "Yu Gothic UI", "Hiragino Sans", system-ui, sans-serif; }
   main { max-width:880px; margin:0 auto; padding:24px 16px 48px; }
+  nav.pages { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:14px; margin:0 0 8px; }
+  nav.pages a { color:var(--muted); text-decoration:none; }
+  nav.pages a[aria-current] { color:var(--fg); font-weight:700; }
   h1 { font-size:28px; line-height:1.3; margin:8px 0 6px; }
   h2 { font-size:20px; margin:36px 0 12px; padding-bottom:6px; border-bottom:1px solid var(--line); }
   p.lead { color:var(--muted); margin:0 0 20px; }
@@ -19,7 +22,7 @@
   .btn { display:inline-block; padding:12px 20px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--fg); text-decoration:none; font-weight:600; }
   .btn.primary { background:var(--acc); border-color:var(--acc); color:#111; }
   .btn:hover { filter:brightness(1.06); }
-  .photos { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; }
+  .photos { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; max-width:580px; }
   @media (max-width:640px) { .photos { grid-template-columns:1fr; } }
   figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
   figure .img { background:var(--photo); aspect-ratio:3 / 4; display:flex; align-items:center; justify-content:center; padding:12px; }
@@ -32,7 +35,10 @@
   th, td { text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
   th { width:30%; color:var(--muted); font-weight:600; }
   tr:last-child th, tr:last-child td { border-bottom:none; }
+  table.pins th, table.pins td { width:auto; }
+  table.pins thead th { color:var(--muted); background:var(--photo); }
   .note { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--acc); border-radius:8px; padding:10px 14px; font-size:15px; }
+  .tablewrap { overflow-x:auto; }
   footer { margin-top:40px; color:var(--muted); font-size:13px; }
 </style>
 <!-- アクセス解析 (GoatCounter: Cookie なし) -->
@@ -40,12 +46,18 @@
 </head>
 <body>
 <main>
-  <h1>NRX01 S-FHSS 受信機</h1>
-  <p class="lead">TI CC2500 を使った小さな 2.4 GHz 受信基板 NRX01 と、Seeed Studio XIAO MG24 Sense を組み合わせた Futaba S-FHSS 受信機です。</p>
+  <nav class="pages">
+    <a href="./" aria-current="page">NRX01 受信モジュール</a>
+    <a href="nrx02.html">NRX02 全部入り受信機</a>
+    <a href="nrx03.html">NRX03 小型ジャイロ受信機</a>
+  </nav>
+
+  <h1>NRX01 S-FHSS SPI制御受信モジュール</h1>
+  <p class="lead">TI CC2500 を載せた 14.38 × 20.27 mm の小さな 2.4 GHz 受信モジュールです。マイコンから SPI で制御して、Futaba S-FHSS の送信機の信号を受信します。</p>
 
   <div class="btns">
-    <a class="btn primary" href="app.html">Receiver ソフトを開く（ログ取り出し・バインド）</a>
-    <a class="btn" href="https://github.com/WestIsland34/Receiver/blob/main/docs/SPEC.md">仕様書</a>
+    <a class="btn primary" href="nrx02.html">NRX02 全部入り受信機（使用例）</a>
+    <a class="btn" href="https://github.com/WestIsland34/Receiver/blob/main/docs/SPEC.md#2-nrx01-基板">仕様書（NRX01 基板）</a>
     <a class="btn" href="https://github.com/WestIsland34/Receiver">GitHub</a>
   </div>
 
@@ -59,54 +71,54 @@
       <div class="img"><img src="images/nrx01_bottom.png" alt="NRX01 裏面。ピン名 VIN・GND・CSn・GDO0・GDO2・SO・SCLK・SI と「に」のロゴ" loading="lazy"></div>
       <figcaption>NRX01 裏面<small>ピン名表示、裏面は GND ベタ</small></figcaption>
     </figure>
-    <figure>
-      <div class="img"><img src="images/xiao_mg24_sense.jpg" alt="Seeed Studio XIAO MG24 Sense" loading="lazy"></div>
-      <figcaption>XIAO MG24 Sense（ホスト）<small>写真：Seeed Studio</small></figcaption>
-    </figure>
   </div>
 
   <h2>特長</h2>
   <ul class="feat">
-    <li><b>受信のみ</b>：技適のない無線部（CC2500）からは電波を出さない設計です。</li>
-    <li><b>S.BUS 16 ch</b>（標準の反転信号、変換回路不要）と <b>PWM 6 ch</b> を同時に出力します。</li>
-    <li><b>ブラックボックス</b>：XIAO の 4 MB フラッシュに 100 Hz で記録します。Betaflight / Rotorflight 互換の .bbl 形式で、受信値・受信強度・ジャイロ・加速度を残します。</li>
-    <li><b>フライトシミュレーター</b>：Bluetooth ゲームパッドとしてパソコンにつながり、S-FHSS の送信機でシミュレーターを操縦できます（追加ソフト不要）。</li>
-    <li><b>バインド</b>：USB シリアルの <code>bind</code> コマンド、または下の Receiver ソフトのボタンで行います。</li>
-    <li>無線部は TI の CC2500EM 参照設計（0.8 mm 基板版）をそのまま写しています。</li>
+    <li><b>受信専用</b>：技適のない無線部（CC2500）からは電波を出さない使い方を前提にしています。</li>
+    <li><b>SPI で制御</b>：SPI 4 本（SI・SCLK・SO・CSn）と受信割込み（GDO0）、電源の 8 ピンでマイコンにつなぎます。</li>
+    <li><b>小型・薄型</b>：14.38 × 20.27 mm、厚さ 0.8 mm の 2 層基板です。</li>
+    <li><b>参照設計どおりの無線部</b>：TI の CC2500EM 参照設計（0.8 mm 基板版）の配置・配線をそのまま写しています。</li>
+    <li><b>アンテナ</b>：λ/4（約 30 mm）の単線を立てるだけ。隣の GND パッドは同軸ピグテールのシールドにも使えます。</li>
   </ul>
-
-  <h2>今後の予定</h2>
-  <p>XIAO MG24 Sense に載っている 6 軸センサー（ジャイロ・加速度）を使って、ジャイロ機能を順に追加する予定です。</p>
-  <ol class="feat">
-    <li><b>バギー</b>：走行中の向きのぶれをステアリングで補正し、まっすぐ走りやすくします。</li>
-    <li><b>飛行機</b>：エルロン・エレベーター・ラダーで機体の揺れを抑え、姿勢を安定させます。</li>
-    <li><b>ヘリコプター</b>（最終目標）：ヘリコプター用のジャイロ機能を目指します。</li>
-  </ol>
-  <p>ジャイロ機能の PID などの設定は、Bluetooth でスマートフォン（Android・iPhone）からつないで調整できるようにする予定です。iPhone では Web Bluetooth に対応したブラウザ <a href="https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055">Bluefy</a> を使います。</p>
-  <p class="note">個人が趣味で開発している物なので、予定は変わることがあります。</p>
 
   <h2>主な仕様</h2>
   <table>
-    <tr><th>対応方式</th><td>Futaba S-FHSS（2.4 GHz、30 ch 周波数ホッピング）</td></tr>
-    <tr><th>出力</th><td>S.BUS 16 ch（D6）、PWM 6 ch（D3 / D4 / D5 / D7 / D18 / D0）</td></tr>
-    <tr><th>Bluetooth</th><td>ゲームパッド（8 軸＋8 ボタン）とコマンド。電源投入後 60 秒間だけ受付、接続がなければ停止</td></tr>
-    <tr><th>記録</th><td>100 Hz、4 MB で約 28 分</td></tr>
-    <tr><th>NRX01 基板</th><td>14.38 × 20.27 mm、2 層 0.8 mm、J1 8 ピン（1.75 mm ピッチ）、アンテナ・GND 端子</td></tr>
-    <tr><th>電源</th><td>3.3 V（XIAO の 3V3 から）</td></tr>
+    <tr><th>無線チップ</th><td>TI CC2500（2.4 GHz トランシーバ、受信のみで使用）</td></tr>
+    <tr><th>対応方式</th><td>Futaba S-FHSS（2.4 GHz、30 ch 周波数ホッピング）※ ホスト側のファームウェアで処理</td></tr>
+    <tr><th>外形</th><td>14.38 × 20.27 mm、2 層、0.8 mm（FR-4）、裏面は GND ベタ</td></tr>
+    <tr><th>電源</th><td>3.3 V（CC2500 の動作範囲 1.8〜3.6 V）、受信時 約 20 mA</td></tr>
+    <tr><th>電源フィルタ</th><td>フェライトビーズ ＋ 10 µF ＋ 各電源ピン直近のデカップリング</td></tr>
+    <tr><th>基準発振</th><td>26 MHz 水晶、±10 ppm</td></tr>
+    <tr><th>J1（ホスト接続）</th><td>はんだパッド 8 個、1.75 mm ピッチ、穴 0.8 mm</td></tr>
+    <tr><th>J2（アンテナ）</th><td>ANT と GND、2.54 mm ピッチ、穴 0.9 mm</td></tr>
+    <tr><th>原価（参考）</th><td>1 枚 約 536 円（JLCPCB に部品の実装まで発注、24 枚。送料は含まず）</td></tr>
   </table>
 
-  <h2>Receiver ソフト</h2>
-  <p>ブラウザから XIAO MG24 に USB ケーブルか Bluetooth でつなぎ、ログの保存・バインド・情報表示・記録停止・全消去ができます。Chrome / Edge で使えます（Bluetooth は Android のスマートフォンからも可。iPhone / iPad は <a href="https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055">Bluefy</a> ブラウザで開きます）。インストールは不要です。</p>
-  <div class="btns">
-    <a class="btn primary" href="app.html">Receiver ソフトを開く</a>
+  <h2>端子（J1）</h2>
+  <div class="tablewrap">
+  <table class="pins">
+    <thead><tr><th>ピン</th><th>信号</th><th>内容</th></tr></thead>
+    <tr><td>1</td><td>SI</td><td>SPI データ入力（MOSI）</td></tr>
+    <tr><td>2</td><td>SCLK</td><td>SPI クロック</td></tr>
+    <tr><td>3</td><td>SO</td><td>SPI データ出力（MISO）</td></tr>
+    <tr><td>4</td><td>GDO2</td><td>汎用出力（使わなければ接続不要）</td></tr>
+    <tr><td>5</td><td>GDO0</td><td>受信割込み（CRC 正常のパケット受信で High）</td></tr>
+    <tr><td>6</td><td>CSn</td><td>チップセレクト</td></tr>
+    <tr><td>7</td><td>GND</td><td>グラウンド</td></tr>
+    <tr><td>8</td><td>VIN</td><td>電源 3.3 V</td></tr>
+  </table>
   </div>
 
+  <h2>使い方</h2>
+  <p>NRX01 は無線部だけのモジュールです。S-FHSS の受信処理はつないだマイコンのファームウェアで行います。Seeed Studio XIAO MG24 Sense と組み合わせ、S.BUS・PWM 出力やブラックボックス記録までできる受信機にしたものが <a href="nrx02.html">NRX02 全部入り受信機</a>、CH32V006 と 6 軸センサーで小さくまとめたものが <a href="nrx03.html">NRX03 小型ジャイロ受信機</a> です。</p>
+  <p class="note">日本では、技適のない CC2500 を送信状態にしないでください。NRX01 用のファームウェアは送信機能を持たない受信専用の作りにしています。</p>
+
   <h2>状態</h2>
-  <p class="note">基板データとファームウェアは作成済みです。基板は試作の準備中で、実機での動作確認はまだです。</p>
+  <p class="note">基板データは作成済みです。基板は試作の準備中で、実機での動作確認はまだです。</p>
 
   <footer>
-    S-FHSS 受信処理は <a href="https://github.com/opiopan/rcstick-f">opiopan/rcstick-f</a>（Apache License 2.0）を移植・改変したものです。
-    XIAO MG24 Sense の写真は Seeed Studio によるものです。
+    無線部の回路・配置は TI の CC2500EM 参照設計に基づきます。
   </footer>
 </main>
 </body>

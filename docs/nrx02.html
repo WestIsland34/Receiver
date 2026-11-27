@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NRX02 XIAO MG24 Sense 全部入り受信機</title>
+<meta name="description" content="受信モジュール NRX01 と Seeed Studio XIAO MG24 Sense を 1 枚の基板にまとめた Futaba S-FHSS 受信機 NRX02。S.BUS・PWM 出力、100 Hz ブラックボックス記録、Bluetooth ゲームパッド。">
+<style>
+  :root { --bg:#f6f7f9; --fg:#1d232b; --card:#fff; --line:#d8dde3; --acc:#d97706; --muted:#5d6874; --photo:#eef0f3; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#14171b; --fg:#e7eaee; --card:#1d2228; --line:#2f363e; --acc:#f59e0b; --muted:#9aa5b1; --photo:#262c33; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.7 "Yu Gothic UI", "Hiragino Sans", system-ui, sans-serif; }
+  main { max-width:880px; margin:0 auto; padding:24px 16px 48px; }
+  nav.pages { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:14px; margin:0 0 8px; }
+  nav.pages a { color:var(--muted); text-decoration:none; }
+  nav.pages a[aria-current] { color:var(--fg); font-weight:700; }
+  h1 { font-size:28px; line-height:1.3; margin:8px 0 6px; }
+  h2 { font-size:20px; margin:36px 0 12px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+  p.lead { color:var(--muted); margin:0 0 20px; }
+  a { color:var(--acc); }
+  .btns { display:flex; flex-wrap:wrap; gap:10px; margin:0 0 8px; }
+  .btn { display:inline-block; padding:12px 20px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--fg); text-decoration:none; font-weight:600; }
+  .btn.primary { background:var(--acc); border-color:var(--acc); color:#111; }
+  .btn:hover { filter:brightness(1.06); }
+  .photos { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; }
+  @media (max-width:640px) { .photos { grid-template-columns:1fr; } }
+  figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  figure .img { background:var(--photo); aspect-ratio:4 / 3; display:flex; align-items:center; justify-content:center; padding:12px; }
+  figure img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
+  figcaption { padding:10px 12px; font-size:14px; }
+  figcaption small { display:block; color:var(--muted); }
+  ul.feat { padding-left:1.2em; margin:0; }
+  ul.feat li { margin:4px 0; }
+  table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; font-size:15px; }
+  th, td { text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { width:30%; color:var(--muted); font-weight:600; }
+  tr:last-child th, tr:last-child td { border-bottom:none; }
+  .note { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--acc); border-radius:8px; padding:10px 14px; font-size:15px; }
+  footer { margin-top:40px; color:var(--muted); font-size:13px; }
+</style>
+<!-- アクセス解析 (GoatCounter: Cookie なし) -->
+<script data-goatcounter="https://westisland.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<main>
+  <nav class="pages">
+    <a href="./">NRX01 受信モジュール</a>
+    <a href="nrx02.html" aria-current="page">NRX02 全部入り受信機</a>
+    <a href="nrx03.html">NRX03 小型ジャイロ受信機</a>
+  </nav>
+
+  <h1>NRX02 XIAO MG24 Sense 全部入り受信機</h1>
+  <p class="lead">受信モジュール <a href="./">NRX01</a>（TI CC2500）と Seeed Studio XIAO MG24 Sense を 1 枚の基板にまとめた Futaba S-FHSS 受信機です。サーボ端子・電源回路・状態表示 LED まで載せています。</p>
+
+  <div class="btns">
+    <a class="btn primary" href="app.html">Receiver ソフトを開く（ログ取り出し・バインド）</a>
+    <a class="btn" href="https://github.com/WestIsland34/Receiver/blob/main/docs/SPEC.md">仕様書</a>
+    <a class="btn" href="https://github.com/WestIsland34/Receiver">GitHub</a>
+  </div>
+
+  <h2>写真</h2>
+  <div class="photos">
+    <figure>
+      <div class="img"><img src="images/nrx02_top.png" alt="NRX02 表面。左に 3 列 9 本のサーボ端子、中央に CH32V003 と RGB LED 2 個、右に XIAO MG24 Sense の取り付け位置と NRX01 の接続パッド" loading="lazy"></div>
+      <figcaption>NRX02 表面（基板の図）<small>43 × 26 mm。右の黒い枠に NRX01 を重ねて載せる</small></figcaption>
+    </figure>
+    <figure>
+      <div class="img"><img src="images/nrx02_bottom.png" alt="NRX02 裏面。右にサーボ端子、左に XIAO の裏面パッド用のパッド" loading="lazy"></div>
+      <figcaption>NRX02 裏面（基板の図）<small>裏から見た向き</small></figcaption>
+    </figure>
+    <figure>
+      <div class="img"><img src="images/xiao_mg24_sense.jpg" alt="Seeed Studio XIAO MG24 Sense" loading="lazy"></div>
+      <figcaption>XIAO MG24 Sense（ホスト）<small>写真：Seeed Studio</small></figcaption>
+    </figure>
+  </div>
+
+  <h2>特長</h2>
+  <ul class="feat">
+    <li><b>受信のみ</b>：技適のない無線部（CC2500）からは電波を出さない設計です。</li>
+    <li><b>S.BUS 16 ch</b>（標準の反転信号）と <b>PWM 6 ch</b> を同時に出力します。</li>
+    <li><b>サーボ端子</b>：3 列 9 本のピンヘッダ（PWM 6 ch・S・X・書き込み用）を基板の端に並べ、サーボや ESC をそのまま挿せます。</li>
+    <li><b>電源</b>：BEC（最大 8.4 V）から 5 V の LDO で XIAO に給電します。BEC の逆差しから守る回路付きです。USB からも動きます。</li>
+    <li><b>ブラックボックス</b>：XIAO の 4 MB フラッシュに 100 Hz で記録します。Betaflight / Rotorflight 互換の .bbl 形式で、受信値・受信強度・ジャイロ・加速度を残します。</li>
+    <li><b>フライトシミュレーター</b>：Bluetooth ゲームパッドとしてパソコンにつながり、S-FHSS の送信機でシミュレーターを操縦できます（追加ソフト不要）。</li>
+    <li><b>I/O 拡張</b>：CH32V003 を I/O 担当として載せ、RGB LED 2 個の状態表示、BEC 電圧の測定、ESC の設定・テレメトリー線（X 端子）を受け持たせる予定です。</li>
+    <li><b>バインド</b>：USB シリアルの <code>bind</code> コマンド、または下の Receiver ソフトのボタンで行います。</li>
+  </ul>
+
+  <h2>今後の予定</h2>
+  <p>XIAO MG24 Sense に載っている 6 軸センサー（ジャイロ・加速度）を使って、ジャイロ機能を順に追加する予定です。</p>
+  <ol class="feat">
+    <li><b>バギー</b>：走行中の向きのぶれをステアリングで補正し、まっすぐ走りやすくします。</li>
+    <li><b>飛行機</b>：エルロン・エレベーター・ラダーで機体の揺れを抑え、姿勢を安定させます。</li>
+    <li><b>ヘリコプター</b>（最終目標）：ヘリコプター用のジャイロ機能を目指します。</li>
+  </ol>
+  <p>ジャイロ機能の PID などの設定は、Bluetooth でスマートフォン（Android・iPhone）からつないで調整できるようにする予定です。iPhone では Web Bluetooth に対応したブラウザ <a href="https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055">Bluefy</a> を使います。</p>
+  <p class="note">個人が趣味で開発している物なので、予定は変わることがあります。</p>
+
+  <h2>主な仕様</h2>
+  <table>
+    <tr><th>対応方式</th><td>Futaba S-FHSS（2.4 GHz、30 ch 周波数ホッピング）</td></tr>
+    <tr><th>出力</th><td>S.BUS 16 ch、PWM 6 ch</td></tr>
+    <tr><th>サーボ端子</th><td>3 列 × 9 本のライトアングル ピンヘッダ（2.54 mm）。1 列 = 信号・＋・－<br>CH1〜CH6（PWM）、S（S.BUS）、X（ESC の設定・テレメトリー線、予定）、書き込み用（CH32V003）</td></tr>
+    <tr><th>電源</th><td>BEC 最大 8.4 V（逆接続保護付き）→ 5 V LDO → XIAO。または USB</td></tr>
+    <tr><th>Bluetooth</th><td>ゲームパッド（8 軸＋8 ボタン）とコマンド。電源投入後 60 秒間だけ受付、接続がなければ停止</td></tr>
+    <tr><th>記録</th><td>100 Hz、4 MB で約 28 分</td></tr>
+    <tr><th>状態表示</th><td>RGB LED × 2（CH32V003 で点灯）</td></tr>
+    <tr><th>拡張端子</th><td>I2C パッド（3V3・GND・SDA・SCL）</td></tr>
+    <tr><th>基板</th><td>43 × 26 mm、2 層。NRX01 は XIAO の上に重ねて載せる</td></tr>
+    <tr><th>原価（参考）</th><td>1 枚 約 515 円（基板と部品。NRX01・XIAO MG24 Sense・送料は含まず）</td></tr>
+  </table>
+
+  <h2>Receiver ソフト</h2>
+  <p>ブラウザから XIAO MG24 に USB ケーブルか Bluetooth でつなぎ、ログの保存・バインド・情報表示・記録停止・全消去ができます。Chrome / Edge で使えます（Bluetooth は Android のスマートフォンからも可。iPhone / iPad は <a href="https://apps.apple.com/app/bluefy-web-ble-browser/id1492822055">Bluefy</a> ブラウザで開きます）。インストールは不要です。</p>
+  <div class="btns">
+    <a class="btn primary" href="app.html">Receiver ソフトを開く</a>
+  </div>
+
+  <h2>状態</h2>
+  <p class="note">基板データは作成済みで、試作基板を準備中です。ファームウェアは NRX01 と XIAO MG24 Sense を配線でつないだ形で作成済み（実機での動作確認はまだ）で、NRX02 の S 端子の回路と CH32V003 に合わせた対応はこれからです。</p>
+
+  <footer>
+    S-FHSS 受信処理は <a href="https://github.com/opiopan/rcstick-f">opiopan/rcstick-f</a>（Apache License 2.0）を移植・改変したものです。
+    XIAO MG24 Sense の写真は Seeed Studio によるものです。
+  </footer>
+</main>
+</body>
+</html>

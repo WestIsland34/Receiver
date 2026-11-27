@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NRX03 S-FHSS 小型ジャイロ受信機</title>
+<meta name="description" content="受信モジュール NRX01 を重ねて載せる 27.5 × 21 mm の Futaba S-FHSS 受信機 NRX03。CH32V006 と 6 軸センサー LSM6DS3TR-C を載せ、S.BUS・PWM 6 ch を出力します。">
+<style>
+  :root { --bg:#f6f7f9; --fg:#1d232b; --card:#fff; --line:#d8dde3; --acc:#d97706; --muted:#5d6874; --photo:#eef0f3; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#14171b; --fg:#e7eaee; --card:#1d2228; --line:#2f363e; --acc:#f59e0b; --muted:#9aa5b1; --photo:#262c33; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.7 "Yu Gothic UI", "Hiragino Sans", system-ui, sans-serif; }
+  main { max-width:880px; margin:0 auto; padding:24px 16px 48px; }
+  nav.pages { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:14px; margin:0 0 8px; }
+  nav.pages a { color:var(--muted); text-decoration:none; }
+  nav.pages a[aria-current] { color:var(--fg); font-weight:700; }
+  h1 { font-size:28px; line-height:1.3; margin:8px 0 6px; }
+  h2 { font-size:20px; margin:36px 0 12px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+  p.lead { color:var(--muted); margin:0 0 20px; }
+  a { color:var(--acc); }
+  .btns { display:flex; flex-wrap:wrap; gap:10px; margin:0 0 8px; }
+  .btn { display:inline-block; padding:12px 20px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--fg); text-decoration:none; font-weight:600; }
+  .btn:hover { filter:brightness(1.06); }
+  .photos { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; max-width:680px; }
+  @media (max-width:640px) { .photos { grid-template-columns:1fr; } }
+  figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  figure .img { background:var(--photo); aspect-ratio:4 / 3; display:flex; align-items:center; justify-content:center; padding:12px; }
+  figure img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
+  figcaption { padding:10px 12px; font-size:14px; }
+  figcaption small { display:block; color:var(--muted); }
+  ul.feat { padding-left:1.2em; margin:0; }
+  ul.feat li { margin:4px 0; }
+  table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; font-size:15px; }
+  th, td { text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { width:30%; color:var(--muted); font-weight:600; }
+  tr:last-child th, tr:last-child td { border-bottom:none; }
+  .note { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--acc); border-radius:8px; padding:10px 14px; font-size:15px; }
+  footer { margin-top:40px; color:var(--muted); font-size:13px; }
+</style>
+<!-- アクセス解析 (GoatCounter: Cookie なし) -->
+<script data-goatcounter="https://westisland.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<main>
+  <nav class="pages">
+    <a href="./">NRX01 受信モジュール</a>
+    <a href="nrx02.html">NRX02 全部入り受信機</a>
+    <a href="nrx03.html" aria-current="page">NRX03 小型ジャイロ受信機</a>
+  </nav>
+
+  <h1>NRX03 S-FHSS 小型ジャイロ受信機</h1>
+  <p class="lead">受信モジュール <a href="./">NRX01</a>（TI CC2500）を上に重ねて載せる、27.5 × 21 mm の Futaba S-FHSS 受信機です。XIAO を使わず、CH32V006 マイコンと 6 軸センサーを基板に載せて小さくまとめました。</p>
+
+  <div class="btns">
+    <a class="btn" href="./">NRX01 受信モジュール</a>
+    <a class="btn" href="https://github.com/WestIsland34/Receiver">GitHub</a>
+  </div>
+
+  <h2>写真</h2>
+  <div class="photos">
+    <figure>
+      <div class="img"><img src="images/nrx03_top.png" alt="NRX03 表面。左に 3 列 8 本のサーボ端子、右に CH32V006・水晶・6 軸センサー・電源回路。右の黒い枠に NRX01 を重ねる" loading="lazy"></div>
+      <figcaption>NRX03 表面（基板の図）<small>27.5 × 21 mm。右の黒い枠に NRX01 を重ねて載せる</small></figcaption>
+    </figure>
+    <figure>
+      <div class="img"><img src="images/nrx03_bottom.png" alt="NRX03 裏面。サーボ端子の名前 1〜6・SB・SW、UART 端子 G・3V・TX・RX、NRX03 v1.0 と「に」のロゴ" loading="lazy"></div>
+      <figcaption>NRX03 裏面（基板の図）<small>端子名の表示、UART 端子（G・3V・TX・RX）</small></figcaption>
+    </figure>
+  </div>
+
+  <h2>特長</h2>
+  <ul class="feat">
+    <li><b>受信のみ</b>：技適のない無線部（CC2500）からは電波を出さない設計です。</li>
+    <li><b>小型</b>：NRX01 を重ねて 27.5 × 21 mm。サーボ端子まで 1 枚に入っています。</li>
+    <li><b>S.BUS</b>（標準の反転信号）と <b>PWM 6 ch</b> を出力します。S.BUS の端子は、設定を変えると PWM の 7 ch 目としても使えます。</li>
+    <li><b>6 軸センサー</b>：ジャイロ・加速度（LSM6DS3TR-C）を載せ、ジャイロ機能に使う予定です。</li>
+    <li><b>サーボ端子</b>：3 列 8 本のピンヘッダ（PWM 6 ch・S.BUS・書き込み用）を基板の端に並べ、サーボや ESC をそのまま挿せます。</li>
+    <li><b>電源</b>：BEC（最大 8.4 V）から 3.3 V の LDO で給電します。BEC の逆差しから守る回路付きです。</li>
+    <li><b>バインドボタン</b>：押しながら電源を入れると、送信機に結び付け直します。</li>
+    <li><b>状態表示</b>：RGB LED で受信中・フェイルセーフなどを表示します。</li>
+    <li><b>Bluetooth で設定</b>：UART 端子（J3）に、別に開発中の Bluetooth モジュールをつなぐと、スマートフォンやパソコンから受信機の設定やジャイロのパラメーター調整ができます。</li>
+  </ul>
+
+  <h2>主な仕様</h2>
+  <table>
+    <tr><th>対応方式</th><td>Futaba S-FHSS（2.4 GHz、30 ch 周波数ホッピング）</td></tr>
+    <tr><th>出力</th><td>S.BUS、PWM 6 ch（50 Hz）。設定で S.BUS の端子を PWM 7 ch 目にできる</td></tr>
+    <tr><th>マイコン</th><td>WCH CH32V006（RISC-V、48 MHz、フラッシュ 62 KB）</td></tr>
+    <tr><th>センサー</th><td>ST LSM6DS3TR-C（6 軸 ジャイロ・加速度）</td></tr>
+    <tr><th>無線部</th><td>NRX01（TI CC2500、受信のみ）を重ねて載せる</td></tr>
+    <tr><th>サーボ端子</th><td>3 列 × 8 本のライトアングル ピンヘッダ（2.54 mm）。1 列 = 信号・＋・－<br>CH1〜CH6（PWM）、SB（S.BUS）、SW（書き込み用、WCH-LinkE）</td></tr>
+    <tr><th>電源</th><td>BEC 最大 8.4 V（逆接続保護付き）→ 3.3 V LDO</td></tr>
+    <tr><th>状態表示・操作</th><td>RGB LED × 1、バインドボタン × 1</td></tr>
+    <tr><th>UART 端子（J3）</th><td>4 本（GND・3.3 V・TX・RX）、2.00 mm ピッチ。Bluetooth モジュール（開発中）をつなぐ</td></tr>
+    <tr><th>基板</th><td>27.5 × 21 mm、2 層</td></tr>
+    <tr><th>原価（参考）</th><td>部品 1 枚 約 360 円（NRX01・送料は含まず。基板はまだ発注していないため含まず）</td></tr>
+  </table>
+
+  <h2>今後の予定</h2>
+  <p>載せている 6 軸センサーを使って、ジャイロ機能を入れる予定です。</p>
+  <p class="note">個人が趣味で開発している物なので、予定は変わることがあります。</p>
+
+  <h2>状態</h2>
+  <p class="note">基板データを作成中です。ファームウェアはこれからです。</p>
+
+  <footer>
+    無線部の回路・配置は TI の CC2500EM 参照設計に基づきます。
+  </footer>
+</main>
+</body>
+</html>
